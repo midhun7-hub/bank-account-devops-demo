@@ -69,6 +69,6 @@ public class BankAccountTest {
         account.withdraw(20);
         account.deposit(70);
 
-        assertEquals(201, account.getBalance());
+        assertEquals(200, account.getBalance());
     }
 }

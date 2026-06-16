@@ -31,8 +31,8 @@ jobs:
           name: bank-account-jar
           path: target/*.jar
 
-      - name: Wait One Minute (Testing)
-        run: sleep 3600
+      - name: Wait Before Deployment
+        run: sleep 10
 
       - name: Deploy
         run: |
@@ -40,66 +40,66 @@ jobs:
           ls -la target
           echo "Deployment successful"
 
-notify:
+  notify:
 
-  needs: build-test-deploy
+    needs: build-test-deploy
 
-  if: always()
+    if: always()
 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
+    steps:
 
-    - name: Send Success Email
-      if: needs.build-test-deploy.result == 'success'
+      - name: Send Success Email
+        if: needs.build-test-deploy.result == 'success'
 
-      uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v3
 
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
 
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
 
-        subject: "CI/CD Pipeline SUCCESS"
+          subject: "CI/CD Pipeline SUCCESS"
 
-        to: ${{ secrets.EMAIL_TO }}
-        from: ${{ secrets.EMAIL_USERNAME }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
 
-        body: |
-          Deployment completed successfully.
+          body: |
+            Deployment completed successfully.
 
-          Repository: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.sha }}
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
 
-          Status: SUCCESS
+            Status: SUCCESS
 
-    - name: Send Failure Email
-      if: needs.build-test-deploy.result == 'failure'
+      - name: Send Failure Email
+        if: needs.build-test-deploy.result == 'failure'
 
-      uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v3
 
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
 
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
 
-        subject: "CI/CD Pipeline FAILED"
+          subject: "CI/CD Pipeline FAILED"
 
-        to: ${{ secrets.EMAIL_TO }}
-        from: ${{ secrets.EMAIL_USERNAME }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
 
-        body: |
-          Pipeline execution failed.
+          body: |
+            Pipeline execution failed.
 
-          Repository: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.sha }}
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
 
-          Status: FAILURE
+            Status: FAILURE

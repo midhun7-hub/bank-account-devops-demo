@@ -39,3 +39,67 @@ jobs:
           echo "Deploying application..."
           ls -la target
           echo "Deployment successful"
+
+notify:
+
+  needs: build-test-deploy
+
+  if: always()
+
+  runs-on: ubuntu-latest
+
+  steps:
+
+    - name: Send Success Email
+      if: needs.build-test-deploy.result == 'success'
+
+      uses: dawidd6/action-send-mail@v3
+
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true
+
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+
+        subject: "CI/CD Pipeline SUCCESS"
+
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.EMAIL_USERNAME }}
+
+        body: |
+          Deployment completed successfully.
+
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+
+          Status: SUCCESS
+
+    - name: Send Failure Email
+      if: needs.build-test-deploy.result == 'failure'
+
+      uses: dawidd6/action-send-mail@v3
+
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true
+
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+
+        subject: "CI/CD Pipeline FAILED"
+
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.EMAIL_USERNAME }}
+
+        body: |
+          Pipeline execution failed.
+
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+
+          Status: FAILURE

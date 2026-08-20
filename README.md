@@ -17,6 +17,7 @@ The project was created for educational purposes to understand:
 
 ---
 
+
 ## Project Structure
 
 ```text
